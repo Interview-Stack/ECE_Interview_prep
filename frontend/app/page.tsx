@@ -1,5 +1,5 @@
 "use client";
-
+import Navbar from "../components/Navbar";
 import { useEffect, useState } from "react";
 import { getStatus } from "../lib/api";
 
@@ -18,20 +18,22 @@ export default function Home() {
             });
     }, []);
 
-    return (
+return (
+    <>
+        <Navbar />
+
         <main
             style={{
                 padding: "40px",
                 fontFamily: "Arial",
             }}
         >
-            <h1>ECE Interview Prep</h1>
-
             <h2>Backend Status</h2>
 
             <p>{connected ? "✅ Connected" : "❌ Disconnected"}</p>
 
             <p>{message}</p>
         </main>
-    );
+    </>
+);
 }
