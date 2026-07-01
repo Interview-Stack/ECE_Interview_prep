@@ -19,3 +19,12 @@ export async function getHealth() {
 
     return response.json();
 }
+export async function getQuestions() {
+    const response = await fetch(`${API_URL}/questions`);
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch questions");
+    }
+
+    return response.json();
+}

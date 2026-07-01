@@ -18,9 +18,9 @@ export default function Navbar() {
                     gap: "20px",
                 }}
             >
-                <span>Home</span>
-                <span>Questions</span>
-                <span>Progress</span>
+                <a href="/">Home</a>
+                <a href="/questions">Questions</a>
+                <a href="/progress">Progress</a>
             </div>
         </nav>
     );
