@@ -1,37 +1,37 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getStatus } from "../lib/api";
 
 export default function Home() {
-  const [message, setMessage] = useState("Connecting...");
-  const [connected, setConnected] = useState(false);
+    const [message, setMessage] = useState("Connecting...");
+    const [connected, setConnected] = useState(false);
 
-  useEffect(() => {
-    fetch("http://127.0.0.1:8000/")
-      .then((res) => res.json())
-      .then((data) => {
-        setMessage(data.message);
-        setConnected(true);
-      })
-      .catch(() => {
-        setMessage("Cannot connect to backend.");
-      });
-  }, []);
+    useEffect(() => {
+        getStatus()
+            .then((data) => {
+                setMessage(data.message);
+                setConnected(true);
+            })
+            .catch(() => {
+                setMessage("Cannot connect to backend.");
+            });
+    }, []);
 
-  return (
-    <main
-      style={{
-        padding: "40px",
-        fontFamily: "Arial",
-      }}
-    >
-      <h1>ECE Interview Prep</h1>
+    return (
+        <main
+            style={{
+                padding: "40px",
+                fontFamily: "Arial",
+            }}
+        >
+            <h1>ECE Interview Prep</h1>
 
-      <h2>Backend Status</h2>
+            <h2>Backend Status</h2>
 
-      <p>{connected ? "✅ Connected" : "❌ Disconnected"}</p>
+            <p>{connected ? "✅ Connected" : "❌ Disconnected"}</p>
 
-      <p>{message}</p>
-    </main>
-  );
+            <p>{message}</p>
+        </main>
+    );
 }
