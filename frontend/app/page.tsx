@@ -23,17 +23,28 @@ return (
         <Navbar />
 
         <main
-            style={{
-                padding: "40px",
-                fontFamily: "Arial",
-            }}
-        >
-            <h2>Backend Status</h2>
+    style={{
+        padding: "40px",
+        fontFamily: "Arial",
+        maxWidth: "900px",
+        margin: "0 auto",
+    }}
+>
+    <h1>ECE Interview Prep</h1>
 
-            <p>{connected ? "✅ Connected" : "❌ Disconnected"}</p>
+    <p>
+        Practice real interview questions for Embedded Systems,
+        FPGA, Linux Drivers, RTL Design, Firmware and more.
+    </p>
 
-            <p>{message}</p>
-        </main>
+    <hr style={{ margin: "30px 0" }} />
+
+    <h2>Backend Status</h2>
+
+    <p>{connected ? "🟢 Online" : "🔴 Offline"}</p>
+
+    <p>{message}</p>
+</main>
     </>
 );
 }
