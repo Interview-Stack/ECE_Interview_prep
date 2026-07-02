@@ -1,7 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
 
-from app.models import Question
+from app.db.database import engine, Base, get_db
+from app.db.models import Question
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="ECE Interview Prep API")
 
@@ -12,37 +16,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-QUESTIONS = [
-    Question(
-        id=1,
-        company="Texas Instruments",
-        role="Embedded Engineer",
-        title="Volatile Keyword",
-        question="What is the volatile keyword in C and when should it be used?",
-        answer=(
-            "volatile tells the compiler that a variable may change outside "
-            "normal program flow, preventing unwanted compiler optimizations."
-        ),
-        difficulty="Easy",
-        tags=["C", "Embedded", "Memory"],
-    ),
-    Question(
-        id=2,
-        company="NVIDIA",
-        role="FPGA Engineer",
-        title="Setup vs Hold",
-        question="Explain setup time and hold time.",
-        answer=(
-            "Setup time is the minimum time data must be stable before the "
-            "clock edge. Hold time is the minimum time data must remain "
-            "stable after the clock edge."
-        ),
-        difficulty="Medium",
-        tags=["FPGA", "Timing"],
-    ),
-]
 
 
 @app.get("/")
@@ -60,6 +33,19 @@ def health():
     }
 
 
-@app.get("/questions", response_model=list[Question])
-def get_questions():
-    return QUESTIONS
+@app.get("/questions")
+def get_questions(db: Session = Depends(get_db)):
+    questions = db.query(Question).all()
+
+    return [
+        {
+            "id": q.id,
+            "title": q.title,
+            "role": q.role,
+            "question": q.question,
+            "answer": q.answer,
+            "difficulty": q.difficulty,
+            "tags": q.tags,
+        }
+        for q in questions
+    ]
