@@ -1,72 +1,217 @@
 "use client";
-
+import { deleteQuestion } from "../lib/api";
 import { useState } from "react";
+import { updateQuestion } from "../lib/api";
 
-type Question = {
-    company: string;
-    role: string;
-    title: string;
-    question: string;
-    answer: string;
-    difficulty: string;
-    tags: string[];
+type Props = {
+    question: any;
+    onUpdated: () => void;
 };
 
-export default function QuestionCard({ question }: { question: Question }) {
-    const [showAnswer, setShowAnswer] = useState(false);
+export default function QuestionCard({
+    question,
+    onUpdated,
+}: Props) {
 
-    return (
-        <div
-            style={{
-                border: "1px solid #444",
-                borderRadius: "10px",
-                padding: "20px",
-                marginTop: "20px",
-            }}
-        >
-            <h2>{question.title}</h2>
+    const [editing, setEditing] = useState(false);
 
-            <p>
-                <strong>Company:</strong> {question.company}
-            </p>
+    const [form, setForm] = useState(question);
 
-            <p>
-                <strong>Role:</strong> {question.role}
-            </p>
+    async function handleSave() {
 
-            <p>
-                <strong>Difficulty:</strong> {question.difficulty}
-            </p>
+        await updateQuestion(question.id, form);
 
-            <hr />
+        setEditing(false);
 
-            <p>{question.question}</p>
+        onUpdated();
+    }
 
-            <button
-                onClick={() => setShowAnswer(!showAnswer)}
+    if (!editing) {
+
+        return (
+
+            <div
                 style={{
-                    marginTop: "15px",
-                    padding: "8px 16px",
-                    cursor: "pointer",
+                    border: "1px solid gray",
+                    borderRadius: "10px",
+                    padding: "20px",
+                    marginBottom: "20px",
                 }}
             >
-                {showAnswer ? "Hide Answer" : "Reveal Answer"}
+
+                <h2>{question.title}</h2>
+
+                <p><b>Role:</b> {question.role}</p>
+
+                <p><b>Difficulty:</b> {question.difficulty}</p>
+
+                <p><b>Tags:</b> {question.tags.join(", ")}</p>
+
+                <hr />
+
+                <p>{question.question}</p>
+
+                <button
+                    onClick={() => setEditing(true)}
+                >
+                    ✏ Edit
+                </button>
+
+<button
+    onClick={async () => {
+
+        const ok = confirm(
+            "Delete this question?"
+        );
+
+        if (!ok) return;
+
+        await deleteQuestion(question.id);
+
+        onUpdated();
+
+    }}
+    style={{
+        marginLeft: "10px",
+    }}
+>
+    🗑 Delete
+</button>
+
+            </div>
+
+        );
+
+    }
+
+    return (
+
+        <div
+            style={{
+                border: "1px solid #2563eb",
+                borderRadius: "10px",
+                padding: "20px",
+                marginBottom: "20px",
+            }}
+        >
+
+            <h2>Editing</h2>
+
+            <input
+                value={form.title}
+                onChange={(e) =>
+                    setForm({
+                        ...form,
+                        title: e.target.value,
+                    })
+                }
+                style={{
+                    width: "100%",
+                    padding: "10px",
+                    marginBottom: "15px",
+                }}
+            />
+
+            <input
+                value={form.role}
+                onChange={(e) =>
+                    setForm({
+                        ...form,
+                        role: e.target.value,
+                    })
+                }
+                style={{
+                    width: "100%",
+                    padding: "10px",
+                    marginBottom: "15px",
+                }}
+            />
+
+            <select
+                value={form.difficulty}
+                onChange={(e) =>
+                    setForm({
+                        ...form,
+                        difficulty: e.target.value,
+                    })
+                }
+                style={{
+                    width: "100%",
+                    padding: "10px",
+                    marginBottom: "15px",
+                }}
+            >
+                <option>Easy</option>
+                <option>Medium</option>
+                <option>Hard</option>
+            </select>
+
+            <textarea
+                rows={5}
+                value={form.question}
+                onChange={(e) =>
+                    setForm({
+                        ...form,
+                        question: e.target.value,
+                    })
+                }
+                style={{
+                    width: "100%",
+                    padding: "10px",
+                    marginBottom: "15px",
+                }}
+            />
+
+            <textarea
+                rows={6}
+                value={form.answer}
+                onChange={(e) =>
+                    setForm({
+                        ...form,
+                        answer: e.target.value,
+                    })
+                }
+                style={{
+                    width: "100%",
+                    padding: "10px",
+                    marginBottom: "15px",
+                }}
+            />
+
+            <input
+                value={form.tags.join(", ")}
+                onChange={(e) =>
+                    setForm({
+                        ...form,
+                        tags: e.target.value
+                            .split(",")
+                            .map((t) => t.trim()),
+                    })
+                }
+                style={{
+                    width: "100%",
+                    padding: "10px",
+                    marginBottom: "20px",
+                }}
+            />
+
+            <button
+                onClick={handleSave}
+            >
+                💾 Save
             </button>
 
-            {showAnswer && (
-                <>
-                    <hr />
+            <button
+                onClick={() => setEditing(false)}
+                style={{
+                    marginLeft: "10px",
+                }}
+            >
+                Cancel
+            </button>
 
-                    <h4>Answer</h4>
-
-                    <p>{question.answer}</p>
-
-                    <p>
-                        <strong>Tags:</strong>{" "}
-                        {question.tags.join(", ")}
-                    </p>
-                </>
-            )}
         </div>
+
     );
+
 }
